@@ -16,7 +16,7 @@ const ON_TRACK_DARK = "#4A80D2";
 const THUMB_COLOR = "#FFFFFF";
 const THUMB_BORDER = "rgba(0,0,0,0.1)";
 
-const ThemedSwitch = ({ value, onValueChange, disabled }) => {
+const ThemedSwitch = ({ value, onValueChange, disabled, accessibilityLabel }) => {
   const { theme } = useTheme();
   const progress = useRef(new Animated.Value(value ? 1 : 0)).current;
 
@@ -50,6 +50,7 @@ const ThemedSwitch = ({ value, onValueChange, disabled }) => {
   return (
     <Pressable
       accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
       accessibilityState={{ checked: value, disabled: !!disabled }}
       disabled={disabled}
       onPress={handlePress}
@@ -86,11 +87,13 @@ ThemedSwitch.propTypes = {
   value: PropTypes.bool.isRequired,
   onValueChange: PropTypes.func,
   disabled: PropTypes.bool,
+  accessibilityLabel: PropTypes.string,
 };
 
 ThemedSwitch.defaultProps = {
   onValueChange: undefined,
   disabled: false,
+  accessibilityLabel: undefined,
 };
 
 export default ThemedSwitch;

@@ -6,6 +6,8 @@ import { SettingsIcon } from "@common/icons";
 const SettingsIconComponent = ({ size, handleSettingsPress, color }) => {
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Open settings"
       onPress={() => {
         handleSettingsPress();
       }}

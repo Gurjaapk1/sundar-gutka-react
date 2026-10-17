@@ -30,7 +30,7 @@ const KidsModeSetting = () => {
         <ListItem.Content>
           <ListItemTitle title={KIDS_MODE} style={styles.listItemTitle} />
         </ListItem.Content>
-        <ThemedSwitch value={enabled} onValueChange={(value) => dispatch(toggleKidsMode(value))} />
+        <ThemedSwitch accessibilityLabel="Kids Mode switch" value={enabled} onValueChange={(value) => dispatch(toggleKidsMode(value))} />
       </ListItem>
       {enabled && (
         <ListItem bottomDivider containerStyle={styles.containerNightStyles}>
@@ -47,6 +47,7 @@ const KidsModeSetting = () => {
             <CustomText style={styles.titleInfoStyle}>{KIDS_SCORING_OPT_IN_INFO}</CustomText>
           </ListItem.Content>
           <ThemedSwitch
+            accessibilityLabel="Check pronunciation online switch"
             value={scoringOptIn}
             onValueChange={(value) => dispatch(setKidsScoringOptIn(value))}
           />
