@@ -16,6 +16,8 @@ import { useRecordedRecitation } from "../host/recitation";
 // Storage goes through redux so redux-persist does the disk write; reading it
 // once on mount keeps the synchronous load() the design relies on.
 const KidsHomeScreen = () => {
+  // CI-only probe: counts renders in logcat (I ReactNativeJS).
+  console.log("KidsHome render");
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const optedIn = useSelector((state) => state.kidsMode.scoringOptIn);
@@ -36,6 +38,11 @@ const KidsHomeScreen = () => {
     [dispatch]
   );
 
+  // CI-only fix: a stable storage identity. Inline in host it changed on every render
+  // (useReferenceAudio returns a new object each time), which re-ran KidsApp's save
+  // effect, dispatched, re-rendered this screen, and looped forever.
+  const storage = useMemo(() => ({ load: () => saved, save }), [saved, save]);
+
   const host = useMemo(
     () => ({
       Sheet,
@@ -43,7 +50,7 @@ const KidsHomeScreen = () => {
       HorizontalScroll,
       Icon,
       image,
-      storage: { load: () => saved, save },
+      storage,
       audio,
       clip,
       recitation,
@@ -51,7 +58,7 @@ const KidsHomeScreen = () => {
       statusBarBackground: "#ffffff",
       safeArea: { top: insets.top, bottom: insets.bottom },
     }),
-    [saved, save, audio, clip, recitation, insets.top, insets.bottom]
+    [saved, storage, audio, clip, recitation, insets.top, insets.bottom]
   );
 
   return (
