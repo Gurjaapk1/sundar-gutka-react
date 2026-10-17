@@ -145,6 +145,11 @@ jobs:
             cd ios && pod _1.16.2_ install 2>&1 | tee ../pod-install.log
           fi
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: podfile-lock
+          path: ios/Podfile.lock
+
       # Only on Xcode 26+: the PR #397 workaround, switching fmt's consteval
       # branch off in the generated Pods header (not tracked app code).
       - name: fmt consteval workaround (Xcode 26+ only)
@@ -169,6 +174,18 @@ jobs:
           tail -50 xcodebuild.log
           grep -q "BUILD SUCCEEDED" xcodebuild.log
 
+      # Which icon fonts land in the .app, and which Info.plist registers.
+      - name: List fonts in the app bundle
+        if: always()
+        run: |
+          APP=$(find build/ios/Build/Products -maxdepth 2 -name "*.app" | head -1)
+          {
+            echo "app: $APP"
+            ls "$APP" | grep -iE "\.(ttf|otf)$" || true
+            echo "--- UIAppFonts"
+            plutil -extract UIAppFonts json -o - "$APP/Info.plist" || true
+          } | tee ios-app-fonts.txt
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -176,4 +193,5 @@ jobs:
           path: |
             xcodebuild.log
             pod-install.log
+            ios-app-fonts.txt
           if-no-files-found: warn

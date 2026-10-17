@@ -6,6 +6,9 @@ ROOT="$GITHUB_WORKSPACE"
 OUT="$ROOT/artifacts"
 mkdir -p "$OUT/screenshots" "$OUT/maestro-debug"
 adb logcat -G 16M || true
+# Android shows a "Viewing full screen" cling over immersive apps on first
+# launch; it swallows taps. Mark it as already seen.
+adb shell settings put secure immersive_mode_confirmations confirmed || true
 adb logcat -c || true
 adb install -r "$ROOT/apk/app-debug.apk" 2>&1 | tee "$OUT/adb-install.txt"
 adb shell getprop ro.product.cpu.abilist | tee "$OUT/device-abi.txt"
